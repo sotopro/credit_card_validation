@@ -4,11 +4,11 @@
 
 import 'react-native';
 import React from 'react';
-import App from '../App';
+import App from '..';
 import {render, screen} from '@testing-library/react-native';
 
 it('renders correctly', () => {
-  const {getByText} = render(<App />);
+  render(<App />);
 
   expect(screen.getByText('Test')).toBeDefined();
 });
