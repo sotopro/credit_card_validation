@@ -8,6 +8,7 @@ import {
   TextStyle,
   KeyboardTypeOptions,
   ReturnKeyTypeOptions,
+  Animated,
 } from 'react-native';
 import {styles} from './styles';
 
@@ -34,7 +35,7 @@ interface InputProps {
 
 const Input = ({
   placeholder,
-  placeholderTextColor,
+  placeholderTextColor = '#CCCCCC',
   value,
   onChange,
   onBlur,
@@ -65,12 +66,12 @@ const Input = ({
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <Text style={[focused ? styles.labelFocused : styles.label, style]}>
+        <Text style={[focused ? styles.labelFocused : styles.label]}>
           {label}
         </Text>
         <TextInput
           testID={testID}
-          style={styles.input}
+          style={[styles.input, style]}
           placeholder={placeholder}
           placeholderTextColor={placeholderTextColor}
           value={value}

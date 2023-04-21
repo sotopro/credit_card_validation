@@ -3,7 +3,32 @@ import {INPUT_TYPES} from '../../constants';
 import {inputTypes} from './types';
 const {UPDATE_INPUT} = inputTypes;
 
-const formatCardNumber = /^([0-9]{4})\s?([0-9]{4})\s?([0-9]{4})\s?([0-9]{4})$/;
+const validateCreditCardNumber = (cardNumber: string): boolean => {
+  cardNumber = cardNumber.replace(/[-\s]/g, '');
+
+  if (!/^\d+$/.test(cardNumber)) {
+    return false;
+  }
+
+  let sum = 0;
+  let shouldDouble = false;
+  for (let i = cardNumber.length - 1; i >= 0; i--) {
+    let digit = parseInt(cardNumber.charAt(i), 10);
+
+    if (shouldDouble) {
+      digit *= 2;
+      if (digit > 9) {
+        digit -= 9;
+      }
+    }
+
+    sum += digit;
+    shouldDouble = !shouldDouble;
+  }
+
+  return sum % 10 === 0;
+};
+
 const formatExpirationDate = /^([0-9]{2})\/([0-9]{2})$/;
 
 const formatSecurityCode = /^[0-9]{3,4}$/;
@@ -18,10 +43,10 @@ export const validateInput: validateInputType = ({type, value}) => {
     case INPUT_TYPES.cardNumber:
       if (value.trim() === '') {
         hasError = true;
-        error = 'Email is required';
-      } else if (!formatCardNumber.test(value)) {
+        error = 'Card number is required';
+      } else if (!validateCreditCardNumber(value)) {
         hasError = true;
-        error = 'Email is not valid';
+        error = 'Card number is not valid';
       } else {
         hasError = false;
         error = '';
