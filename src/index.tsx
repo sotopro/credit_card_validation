@@ -185,6 +185,13 @@ const App = (): JSX.Element => {
         <View style={styles.modalContainer}>
           <Text style={styles.modalText}>Payment Submitted</Text>
           <Image style={styles.modalImage} source={SuccessImage} />
+          <View style={styles.modalButtonContainer}>
+            <Button
+              testID="closeButton"
+              title="Complete"
+              onPress={() => setIsPaymentSubmitted(!isPaymentSubmitted)}
+            />
+          </View>
         </View>
       </Modal>
     </SafeAreaView>
@@ -249,6 +256,10 @@ const styles = StyleSheet.create({
   modalImage: {
     width: 100,
     height: 100,
+  },
+  modalButtonContainer: {
+    marginVertical: 20,
+    width: '50%',
   },
 });
 
