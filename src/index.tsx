@@ -178,7 +178,10 @@ const App = (): JSX.Element => {
           />
         </View>
       </View>
-      <Modal visible={isPaymentSubmitted} animationType="slide">
+      <Modal
+        testID="successModal"
+        visible={isPaymentSubmitted}
+        animationType="slide">
         <View style={styles.modalContainer}>
           <Text style={styles.modalText}>Payment Submitted</Text>
           <Image style={styles.modalImage} source={SuccessImage} />

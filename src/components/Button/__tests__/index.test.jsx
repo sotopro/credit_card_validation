@@ -4,7 +4,7 @@ import Component from '..';
 
 describe('Button', () => {
   it('should render correctly', () => {
-    render(<Component title="Test" />);
+    render(<Component title="Test" disabled={false} />);
 
     expect(screen.getByText('Test')).toBeTruthy();
   });
@@ -16,5 +16,12 @@ describe('Button', () => {
     fireEvent.press(screen.getByText('Test'));
 
     expect(onPress).toHaveBeenCalled();
+  });
+
+  it('should disable button', () => {
+    const onPress = jest.fn();
+    render(<Component title="Test" onPress={onPress} disabled={true} />);
+
+    expect(screen.getByText('Test')).toBeTruthy();
   });
 });
