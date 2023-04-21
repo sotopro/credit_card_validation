@@ -8,7 +8,7 @@ const minCardNumberLength = 13;
 const formatCardNumer =
   /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9]{2})[0-9]{12}|3[47][0-9]{13})$/;
 
-const validateCreditCardNumber = (cardNumber: string): boolean => {
+export const validateCreditCardNumber = (cardNumber: string): boolean => {
   cardNumber = cardNumber.replace(/[-\s]/g, '');
 
   if (!/^\d+$/.test(cardNumber)) {
@@ -34,7 +34,7 @@ const validateCreditCardNumber = (cardNumber: string): boolean => {
   return sum % 10 === 0;
 };
 
-const validateExpirationDate = (expirationDate: string): boolean => {
+export const validateExpirationDate = (expirationDate: string): boolean => {
   const [month, year] = expirationDate.split('/');
 
   const currentYear = new Date().getFullYear();
@@ -54,7 +54,7 @@ const validateExpirationDate = (expirationDate: string): boolean => {
   return true;
 };
 
-const isAmexCard = (cardNumber: string): boolean => {
+export const isAmexCard = (cardNumber: string): boolean => {
   return cardNumber.startsWith('34') || cardNumber.startsWith('37');
 };
 
