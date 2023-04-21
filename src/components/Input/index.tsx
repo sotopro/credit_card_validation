@@ -8,7 +8,6 @@ import {
   TextStyle,
   KeyboardTypeOptions,
   ReturnKeyTypeOptions,
-  Animated,
 } from 'react-native';
 import {styles} from './styles';
 

@@ -1,8 +1,11 @@
 import {Dispatch} from 'react';
+import {initialState} from '../..';
 
 export enum inputTypes {
   UPDATE_INPUT = 'UPDATE_INPUT',
 }
+
+export type inputType = string;
 
 export type validateInputType = ({
   type,
@@ -18,7 +21,7 @@ export type validateInputType = ({
 export type inputActionType = {
   type: string;
   data: {
-    type: string;
+    type: inputType;
     value: string;
     hasError: boolean;
     error: string;
@@ -33,8 +36,8 @@ export type onInputChangeType = ({
   dispatch,
   formState,
 }: {
-  type: string;
+  type: inputType;
   value: string;
   dispatch: Dispatch<inputActionType>;
-  formState: {[key: string]: {hasError: boolean; error: string}};
+  formState: typeof initialState | any;
 }) => void;

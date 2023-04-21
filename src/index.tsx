@@ -5,51 +5,77 @@
  * @format
  */
 
-import React, {useState} from 'react';
-import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import React, {useReducer, useState} from 'react';
+import {Modal, SafeAreaView, StyleSheet, View, Image, Text} from 'react-native';
 import {Button, Input} from './components';
+import {inputActionType, inputType, inputTypes} from './utils/inputs/types';
+import {onInputChange} from './utils/inputs';
+import {INPUT_TYPES} from './constants';
+import SuccessImage from '../assets/images/verification-check.png';
+
+export const initialState = {
+  cardNumber: {value: '', error: '', touched: false, hasError: true},
+  expirationDate: {value: '', error: '', touched: false, hasError: true},
+  securityCode: {value: '', error: '', touched: false, hasError: true},
+  firstName: {value: '', error: '', touched: false, hasError: true},
+  lastName: {value: '', error: '', touched: false, hasError: true},
+  isFormValid: false,
+};
+
+const formReducer = (state: typeof initialState, action: inputActionType) => {
+  switch (action.type) {
+    case inputTypes.UPDATE_INPUT:
+      const {type, value, hasError, error, touched, isFormValid} = action.data;
+      return {
+        ...state,
+        [type]: {
+          value,
+          hasError,
+          error,
+          touched,
+        },
+        isFormValid,
+      };
+    default:
+      return state;
+  }
+};
 
 const App = (): JSX.Element => {
-  const [cardNumber, setCardNumber] = useState('');
-  const [expirationDate, setExpirationDate] = useState('');
-  const [cvv, setCvv] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [formState, dispatchFormState] = useReducer(formReducer, initialState);
+  const [isPaymentSubmitted, setIsPaymentSubmitted] = useState(false);
 
   const onSubmitPayment = () => {
-    console.log('onSubmitPayment');
+    setIsPaymentSubmitted(!isPaymentSubmitted);
   };
 
-  const onChangeTextInput = (value: string) => {
-    setCardNumber(value);
-  };
-
-  const onBlurTextInput = () => {
-    console.log('onBlurTextInput');
-  };
-
-  const onFocusTextInput = () => {
-    console.log('onFocusTextInput');
+  const onChangeTextInput = ({
+    value,
+    type,
+  }: {
+    value: string;
+    type: inputType;
+  }) => {
+    onInputChange({type, value, dispatch: dispatchFormState, formState});
   };
 
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
       <View style={styles.container}>
-        <Text>Test</Text>
         <View style={styles.paymentContainer}>
           <View style={styles.inputContainer}>
             <Input
               testID="cardNumberInput"
               label="Card Number"
               placeholder="1234 5678 9012 3456"
-              value={cardNumber}
-              onChange={text => onChangeTextInput(text)}
-              onBlur={onBlurTextInput}
-              onFocus={onFocusTextInput}
+              value={formState.cardNumber.value}
+              onChange={text =>
+                onChangeTextInput({value: text, type: INPUT_TYPES.cardNumber})
+              }
               keyboardType="number-pad"
-              hasError={false}
-              error=""
-              touched={false}
+              hasError={formState.cardNumber.hasError}
+              error={formState.cardNumber.error}
+              touched={formState.cardNumber.touched}
               autoCorrect={false}
               autoCapitalize="none"
               returnKeyType="next"
@@ -62,14 +88,17 @@ const App = (): JSX.Element => {
                 testID="expirationDateInput"
                 label="Expiration Date"
                 placeholder="MM/YY"
-                value={expirationDate}
-                onChange={text => onChangeTextInput(text)}
-                onBlur={onBlurTextInput}
-                onFocus={onFocusTextInput}
-                keyboardType="number-pad"
-                hasError={false}
-                error=""
-                touched={false}
+                value={formState.expirationDate.value}
+                onChange={text =>
+                  onChangeTextInput({
+                    value: text,
+                    type: INPUT_TYPES.expirationDate,
+                  })
+                }
+                keyboardType="numbers-and-punctuation"
+                hasError={formState.expirationDate.hasError}
+                error={formState.expirationDate.error}
+                touched={formState.expirationDate.touched}
                 autoCorrect={false}
                 autoCapitalize="none"
                 returnKeyType="next"
@@ -81,14 +110,17 @@ const App = (): JSX.Element => {
                 testID="cvvInput"
                 label="CVV"
                 placeholder="123"
-                value={cvv}
-                onChange={text => onChangeTextInput(text)}
-                onBlur={onBlurTextInput}
-                onFocus={onFocusTextInput}
+                value={formState.securityCode.value}
+                onChange={text =>
+                  onChangeTextInput({
+                    value: text,
+                    type: INPUT_TYPES.securityCode,
+                  })
+                }
                 keyboardType="number-pad"
-                hasError={false}
-                error=""
-                touched={false}
+                hasError={formState.securityCode.hasError}
+                error={formState.securityCode.error}
+                touched={formState.securityCode.touched}
                 autoCorrect={false}
                 autoCapitalize="none"
                 returnKeyType="next"
@@ -102,18 +134,18 @@ const App = (): JSX.Element => {
                 testID="firstNameInput"
                 label="First Name"
                 placeholder="John"
-                value={firstName}
-                onChange={text => onChangeTextInput(text)}
-                onBlur={onBlurTextInput}
-                onFocus={onFocusTextInput}
+                value={formState.firstName.value}
+                onChange={text =>
+                  onChangeTextInput({value: text, type: INPUT_TYPES.firstName})
+                }
                 keyboardType="default"
-                hasError={false}
-                error=""
-                touched={false}
+                hasError={formState.firstName.hasError}
+                error={formState.firstName.error}
+                touched={formState.firstName.touched}
                 autoCorrect={false}
                 autoCapitalize="none"
                 returnKeyType="next"
-                maxLength={5}
+                maxLength={255}
               />
             </View>
             <View style={styles.rowContainer}>
@@ -121,18 +153,18 @@ const App = (): JSX.Element => {
                 testID="lastNameInput"
                 label="Last Name"
                 placeholder="Doe"
-                value={lastName}
-                onChange={text => onChangeTextInput(text)}
-                onBlur={onBlurTextInput}
-                onFocus={onFocusTextInput}
+                value={formState.lastName.value}
+                onChange={text =>
+                  onChangeTextInput({value: text, type: INPUT_TYPES.lastName})
+                }
                 keyboardType="number-pad"
-                hasError={false}
-                error=""
-                touched={false}
+                hasError={formState.lastName.hasError}
+                error={formState.lastName.error}
+                touched={formState.lastName.touched}
                 autoCorrect={false}
                 autoCapitalize="none"
                 returnKeyType="next"
-                maxLength={4}
+                maxLength={255}
               />
             </View>
           </View>
@@ -142,9 +174,16 @@ const App = (): JSX.Element => {
             testID="paymentButton"
             title="Submit Payment"
             onPress={onSubmitPayment}
+            disabled={!formState.isFormValid}
           />
         </View>
       </View>
+      <Modal visible={isPaymentSubmitted} animationType="slide">
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalText}>Payment Submitted</Text>
+          <Image style={styles.modalImage} source={SuccessImage} />
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -191,6 +230,22 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingRight: 10,
     paddingLeft: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#000000',
+    textAlign: 'center',
+    marginVertical: 20,
+  },
+  modalImage: {
+    width: 100,
+    height: 100,
   },
 });
 

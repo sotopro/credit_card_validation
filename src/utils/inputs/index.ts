@@ -3,6 +3,11 @@ import {INPUT_TYPES} from '../../constants';
 import {inputTypes} from './types';
 const {UPDATE_INPUT} = inputTypes;
 
+const minCardNumberLength = 13;
+
+const formatCardNumer =
+  /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9]{2})[0-9]{12}|3[47][0-9]{13})$/;
+
 const validateCreditCardNumber = (cardNumber: string): boolean => {
   cardNumber = cardNumber.replace(/[-\s]/g, '');
 
@@ -29,6 +34,30 @@ const validateCreditCardNumber = (cardNumber: string): boolean => {
   return sum % 10 === 0;
 };
 
+const validateExpirationDate = (expirationDate: string): boolean => {
+  const [month, year] = expirationDate.split('/');
+
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth() + 1;
+
+  const expirationYear = parseInt(year, 10) + 2000;
+  const expirationMonth = parseInt(month, 10);
+
+  if (expirationYear < currentYear) {
+    return false;
+  }
+
+  if (expirationYear === currentYear && expirationMonth < currentMonth) {
+    return false;
+  }
+
+  return true;
+};
+
+const isAmexCard = (cardNumber: string): boolean => {
+  return cardNumber.startsWith('34') || cardNumber.startsWith('37');
+};
+
 const formatExpirationDate = /^([0-9]{2})\/([0-9]{2})$/;
 
 const formatSecurityCode = /^[0-9]{3,4}$/;
@@ -44,7 +73,11 @@ export const validateInput: validateInputType = ({type, value}) => {
       if (value.trim() === '') {
         hasError = true;
         error = 'Card number is required';
-      } else if (!validateCreditCardNumber(value)) {
+      } else if (
+        !validateCreditCardNumber(value) ||
+        !formatCardNumer.test(value) ||
+        value.length < minCardNumberLength
+      ) {
         hasError = true;
         error = 'Card number is not valid';
       } else {
@@ -56,7 +89,10 @@ export const validateInput: validateInputType = ({type, value}) => {
       if (value.trim() === '') {
         hasError = true;
         error = 'Expiration date is required';
-      } else if (!formatExpirationDate.test(value)) {
+      } else if (
+        !formatExpirationDate.test(value) ||
+        !validateExpirationDate(value)
+      ) {
         hasError = true;
         error = 'Expiration date is not valid';
       } else {
@@ -68,7 +104,11 @@ export const validateInput: validateInputType = ({type, value}) => {
       if (value.trim() === '') {
         hasError = true;
         error = 'Security code is required';
-      } else if (!formatSecurityCode.test(value)) {
+      } else if (
+        !formatSecurityCode.test(value) ||
+        (isAmexCard(value) && value.length !== 4) ||
+        (!isAmexCard(value) && value.length !== 3)
+      ) {
         hasError = true;
         error = 'Security code is not valid';
       } else {
@@ -103,7 +143,6 @@ export const validateInput: validateInputType = ({type, value}) => {
     default:
       break;
   }
-
   return {hasError, error};
 };
 

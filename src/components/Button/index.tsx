@@ -7,14 +7,16 @@ interface buttonProps {
   onPress: () => void;
   title: string;
   style?: TextStyle | TextStyle[];
+  disabled?: boolean;
 }
 
-const Button = ({testID, onPress, title, style}: buttonProps) => {
+const Button = ({testID, onPress, title, style, disabled}: buttonProps) => {
   return (
     <TouchableOpacity
+      disabled={disabled}
       testID={testID}
       onPress={onPress}
-      style={[styles.container, style]}>
+      style={[disabled ? styles.disabledContainer : styles.container, style]}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>{title}</Text>
       </View>

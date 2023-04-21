@@ -28,7 +28,7 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   helperText: {
-    fontSize: 12,
+    fontSize: 10,
     color: 'red',
   },
 });

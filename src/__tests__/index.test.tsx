@@ -11,13 +11,6 @@ describe('App', () => {
   it('renders correctly', () => {
     render(<App />);
 
-    expect(screen.getByText('Test')).toBeDefined();
-  });
-
-  it('should press button', async () => {
-    render(<App />);
-    await fireEvent.press(screen.getByTestId('paymentButton'));
-
-    expect(screen.getByTestId('paymentButton')).toBeDefined();
+    expect(screen.getByTestId('cardNumberInput')).toBeTruthy();
   });
 });
